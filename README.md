@@ -1,5 +1,4 @@
 # Lab3. Integrating AWS Lambda Functions in a Mendix App
-========================================================
 
 # Overview
 
