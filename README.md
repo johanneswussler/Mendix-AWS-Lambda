@@ -1,10 +1,18 @@
-# Mendix AWS Rekoginition Template
+# Lab3. Integrating AWS Lambda Functions in a Mendix App
+========================================================
 
-Welcome to the Mendix AWS Rekognition workshop! 
+# Overview
 
-This workshop has been designed to help you get started with using Mendix and AWS Rekognition. It contains all the required modules to make it easy for you to build an app connected to AWS Rekognition. Once built the app will allow you to take a photo on your mobile phone or laptop, upload it to AWS Rekognition, and view the results of the Rekognition analysis. The template contains a start and complete module so that you can either decide to use the final solution or build your way up to the solution.
+Welcome to the Mendix AWS Lambda lab! 
 
-<b>This template already assumes that you have some knowledge of AWS, a AWS account, and a Mendix account</b>
+This lab has been designed to help you get started with using Mendix with [Amazon Lambda](https://aws.amazon.com/lambda/). After completing this lab, you will have the knowledge of how to use the [Mendix AWS Lambda connector](https://marketplace.mendix.com/link/component/204511) in order to call AWS Lambda functions by first converting an input object to JSON format, and then converting the output JSON of the AWS Lambda function back into a Mendix object.
+
+You will be using the following key services:
+
+* [Amazon Lambda](https://aws.amazon.com/lambda/)
+
+
+<b>This workshop assumes that you already have some knowledge of AWS, an AWS account, and a Mendix account</b>
 
 You can signup for a free Mendix account for free here: [Sign Up for Free](https://signup.mendix.com/link/signup/?source=none&medium=aws-demo)
 
