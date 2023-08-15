@@ -55,55 +55,60 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 
 ## AWS Build
 
-### Amazon S3 Dataset
-The image dataset used in the webinar is available here: [Cars.zip](https://s3.eu-central-1.amazonaws.com/mendixdemo.com/aws/cars.zip) Download and unzip folder.
+### Amazon Lambda Functions
 
-1.	Sign in to the AWS Management Console and open the Amazon S3 console at https://console.aws.amazon.com/s3/.
-2.	Choose Create bucket.
+To start off the lab you need to create two Amazon Lambda functions that will later be invoked in the Mendix app.
+In both cases, use a Node.js 18.x runtime. Create the functions in a region of your choosing. 
+The code for both functions can be copied from below:
 
-**IMPORTANT: AWS accounts have a 100 bucket limit by default: [Bucket restrictions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/BucketRestrictions.html)**
+```node.js
+export const handler = async(event) => {
+    const lastCharacter = event.id.slice(-1);
+    var randomNumber = Math.floor(Math.random() * 100);
+    
+    if (randomNumber > 50){
+        return {
+            statusCode: 200,
+            body: JSON.stringify({Status: 'Bezorgd'}),
+        };
+    }
+    else {
+        return {
+            statusCode: 200,
+            body: JSON.stringify({Status: 'Onderweg'}),
+        };
+    }
+    
+};
+```
 
-The Create bucket wizard opens.
-
-3.	In Bucket name, enter a DNS-compliant name for your bucket. For example *mendixcars-yourname*
-4.	In Region, choose the AWS Region where you want the bucket to reside.
-Choose a Region close to you to minimize latency and costs and address regulatory requirements. Validate that Amazon Rekognition service is available in that region.
-5.	Leave other settings as default, scroll down and click **Create bucket** button.
-6.	Select a new bucket. You should be able to upload the entire **Cars** folder by dragging and dropping it to upload or sync the folder with your local files using the AWS CLI. 
-<img src="readme-img/s3-bucket-upload.gif"/>
-<img src="readme-img/s3-bucket.png"/>
-
-
-7. If you decide to use AWS CLI, make sure you configire credentials by following instructuins outlined in the [AWS documentation](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html). 
-
-
-Note: AWS Config and role should have permission for Rekognition. Check an IAM User that is used in AWS CLI Config. Create a group in IAM such as *PerformActionToRekognition*. Attach **AmazonRekognitionFullAccess** policy to group. Add your IAM user to the newly created group.
-
-8. After you configured AWS CLI then navigate to the folder that contains *cars* folder and use S3 sync command:
-
-```aws s3 sync . s3://mybucket```
-
-<img src="readme-img/s3-bucket-upload-2.gif"/>
-
-Note: make sure that you upload "cars" folder to the bucket.
-
-
-8. Open the [IAM console](https://console.aws.amazon.com/iam/)
-9. In the navigation pane of the IAM console, choose **Roles**, and then choose **Create role**.
-10. For **Select trusted entity**, choose **AWS service**.
-11. From Use Case  search **Rekognition**. Use cases are defined by the service to include the trust policy required by the service. Then, choose **Next**.
-
-<img src="readme-img/iam-role-create.jpg"/>
-
-12. Give role name such as *Mendix_Rekog_To_S3*. Review information and click **Create role**.
-13. Once the role is created, find it in the search bar and drill down into it
-
-<img src="readme-img/rekognition-role1.png"/>
-
-14. Make sure to copy the ARN using the copy icon and keep this for later steps
-
-<img src="readme-img/rekognition-role2.png"/>
-
+```node.js
+export const handler = async(event) => {
+    
+   
+    
+    const lastCharacter = event.id.slice(-1);
+    
+    if (lastCharacter == '1'){
+        return {
+            statusCode: 200,
+            body: JSON.stringify({Stad: 'Den Haag'}),
+        };
+    }
+    else if(lastCharacter == '2'){
+        return {
+            statusCode: 200,
+            body: JSON.stringify({Stad: 'Amsterdam'}),
+        };
+    }
+    else {
+        return {
+            statusCode: 200,
+            body: JSON.stringify({Stad: 'Rotterdam'}),
+        };
+    }
+};
+```
 
 ### Amazon Rekognition
 <img src="readme-img/rekognition-steps.png"/>
