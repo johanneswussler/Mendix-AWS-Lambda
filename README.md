@@ -22,15 +22,7 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 - [Mendix AWS Rekoginition Template](#mendix-aws-rekoginition-template)
 - [Workshop Outline:](#workshop-outline)
   - [AWS Build](#aws-build)
-    - [Amazon S3 Dataset](#amazon-s3-dataset)
-    - [Amazon Rekognition](#amazon-rekognition)
-      - [Create S3 Bucket when prompted](#create-s3-bucket-when-prompted)
-      - [Create Project (console)](#create-project-console)
-      - [Create Dataset](#create-dataset)
-      - [Label Images](#label-images)
-      - [Train Model](#train-model)
-      - [Evaluate](#evaluate)
-      - [Use Model](#use-model)
+    - [Create the Amazon Lambda Functions](#create-the-amazon-lambda-functions)   
   - [Mendix Setup](#mendix-setup)
     - [Windows Setup](#windows-setup)
     - [Mac or Non-Windows Setup - Launch windows EC2 Instance with Mendix Studio Pro Installed](#mac-or-non-windows-setup---launch-windows-ec2-instance-with-mendix-studio-pro-installed)
@@ -55,12 +47,13 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 
 ## AWS Build
 
-### Amazon Lambda Functions
+### Create the Amazon Lambda Functions
 
 To start off the lab you need to create two Amazon Lambda functions that will later be invoked in the Mendix app.
 In both cases, use a Node.js 18.x runtime. Create the functions in a region of your choosing. 
 The code for both functions can be copied from below:
 
+Function *getPackageStatus*:
 ```node.js
 export const handler = async(event) => {
     const lastCharacter = event.id.slice(-1);
@@ -82,6 +75,7 @@ export const handler = async(event) => {
 };
 ```
 
+Function *getPackageLocation*:
 ```node.js
 export const handler = async(event) => {
     
@@ -109,134 +103,6 @@ export const handler = async(event) => {
     }
 };
 ```
-
-### Amazon Rekognition
-<img src="readme-img/rekognition-steps.png"/>
-
-With Amazon Rekognition Custom Labels, you can identify the objects and scenes in images that are specific to your business needs. For example, you can find your logo in social media posts, identify your products on store shelves, classify machine parts in an assembly line, distinguish healthy and infected plants, or detect animated characters in videos.
-
-No machine learning expertise is required to build your custom model. Rekognition Custom Labels includes AutoML capabilities that take care of the machine learning for you. Once the training images are provided, Rekognition Custom Labels can automatically load and inspect the data, select the right machine learning algorithms, train a model, and provide model performance metrics.
-
-Rekognition Custom Labels builds off of Rekognition’s existing capabilities, which are already trained on tens of millions of images across many categories. Instead of thousands of images, you simply need to upload a small set of training images (typically a few hundred images or less) that are specific to your use case into our easy-to-use console. If your images are already labeled, Rekognition can begin training in just a few clicks. If not, you can label them directly within Rekognition’s labeling interface, or use Amazon SageMaker Ground Truth to label them for you. Once Rekognition begins training from your image set, it can produce a custom image analysis model for you in just a few hours. Behind the scenes, Rekognition Custom Labels automatically loads and inspects the training data, selects the right machine learning algorithms, trains a model, and provides model performance metrics. You can then use your custom model via the Rekognition Custom Labels API and integrate it into your applications.
-
-In this example, we will train to analyze car makers and damages.
-
-#### Create S3 Bucket when prompted
-
-The first time you use Rekognition in a region, it will prompt you to create an S3 bucket to store your project files
-1. Click **Create S3 bucket**
-
-
-<img src="readme-img/running-first-time.png">
-
-#### Create Project (console)
-1.	Sign in to the AWS Management Console and open the Amazon Rekognition console at https://console.aws.amazon.com/rekognition/
-2.	In the left pane, choose **Use Custom Labels**. The Amazon Rekognition Custom Labels landing page is shown.
-3.	The Amazon Rekognition Custom Labels landing page, choose to **Get started**. In the left pane, **Choose Projects**. 
-4.	Choose a Region close to you to minimize latency and costs and address regulatory requirements.
-5.	Choose **Create Project**.
-6.	In Project name, enter a name for your project. For example *mendixcars*
-7.	Choose **Create project** to create your project.
-
-#### Create Dataset
-
-1.	Choose **Create dataset**. The Create dataset page is shown.
-2.	In Starting configuration, choose **Start with a single dataset**
-
-<img src="readme-img/rekognition-dataset.png">
-
-3.	Choose Import images from Amazon S3 bucket.
-4.	In S3 URI, enter the Amazon S3 bucket location and folder path. Select a parent *cars* folder that contains folders: *bmw, mercedes, lamborghini* and click Copy S3 URI.
-
-<img src="readme-img/rekognition-objects.png">
-
-5.	Choose Automatically attach labels to images based on the folder.
-6.	Choose Create Datasets. The datasets page for your project opens.
-
-<img src="readme-img/rekognition-explore.png">
-
-7.	Scroll down and copy the policy provided.  In a new tab, open the S3 console and select your bucket with images. 
-
-
-<img src="readme-img/rekognition-policy.png">
-
-8.	On **Permissions** tab scroll down to **Bucket policy** and click edit and paste the policy. 
-
-**IMPORTANT: Make sure to delete any leading whitespace after pasting**
-
-<img src="readme-img/rekognition-permissions.png">
-
-<img src="readme-img/rekognition-permissions2.png">
-
-9. Change the principal from *rekognition.amazonaws.com* service to the ARN of role created in Step 12 of previous section. Click Save changes to save policy update. In each instance of
-```
-"Principal": {
-  "Service" : "rekognition.amazonaws.com"
-}
-```
-
-with 
-
-```
-"Principal": {
-  "AWS" : "arn:aws:iam::<insert role ARN details>"
-}
-```
-
-**There will be FOUR instances that need to be replaced**
-
-
-<img src="readme-img/rekognition-role-update.jpg">
-
-10.	Go back to Amazon Rekognition configuration, click **Create Dataset** in Rekognition console. Depending on the number of images, it might take a few minutes to create a dataset.
-
-#### Label Images
-1.	You can review images in the dataset and validate automatically assigned labels.
-2.	In the image gallery, select on the left pane **Labeled** and use check boxes to review images of cars.
-
-<img src="readme-img/rekognition-labelling1.png">
-
-#### Train Model
-1.  On the Project page, choose **Train model**.
-
-<img src="readme-img/rekognition-train-model.png">
-
-2.  Keep default settings and click **Train model**. Depending on a number of images it will take from 30 minutes to 24 hours. 
-Note: 200 images takes about 40 minutes. You don't have to wait for model completion please proceed to the next section.
-
-<img src="readme-img/rekognition-train-confirmation.png">
-
-3. Check on Status 
-
-<img src="readme-img/rekognition-train-process.png">
-
-4. What do we do while we wait!? While your model is training, feel free to start with the steps starting at [Mendix Setup](#mendix-setup)
-
-
-#### Evaluate
-1.	In the Models section of the project page, you can check the current status in the Model Status column, where the training's in progress.
-
-<img src="readme-img/rekognition-evaluate.png">
-
-After your model is trained, Amazon Rekognition Custom Labels provides the following metrics as a summary of the training results and as metrics for each label: Precision, Recall, F1.
-
-2.  If you are interested in how your model performed on test images Choose View test results to see the results for individual test images. For more information, see [Metrics for evaluating your model](https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/im-metrics-use.html).
-
-<img src="readme-img/rekognition-evaluate-2.png">
-
-
-#### Use Model
-1.	In the Start or stop model section select the number of inference units that you want to use. For more information, see [Running a trained Amazon Rekognition Custom Labels model](https://docs.aws.amazon.com/rekognition/latest/customlabels-dg/running-model.html).
-2.	Choose **Start**. In the Start model dialog box, choose **Start**.
-3.	In the Model section, check the status of the model. When the model status is RUNNING, you can use the model to analyze images. 
-
-<img src="readme-img/rekognition-use-model.png">
-
-4. You can test your model using AWS CLI command.
-
-```aws rekognition detect-custom-labels --project-version-arn "your model arn" --image "S3Object={Bucket=mendixcars, Name=car.jpg}" --region us-west-2```
-
-5. Replace the information in yellow with details of your model and a bucket containing new images for analysis.
 
 ## Mendix Setup
 
