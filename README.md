@@ -62,13 +62,13 @@ export const handler = async(event) => {
     if (randomNumber > 50){
         return {
             statusCode: 200,
-            body: JSON.stringify({Status: 'Bezorgd'}),
+            body: JSON.stringify({Status: 'Delivered'}),
         };
     }
     else {
         return {
             statusCode: 200,
-            body: JSON.stringify({Status: 'Onderweg'}),
+            body: JSON.stringify({Status: 'In Transit'}),
         };
     }
     
