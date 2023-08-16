@@ -24,6 +24,9 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 - [1. Create the Amazon Lambda Functions](#1.-create-the-amazon-lambda-functions)   
 - [2. Create the Mendix Application](#2.-create-the-mendix-application)
   - [Start Mendix Studio Pro](#start-mendix-studio-pro)
+- [3. Import the Connectors](#import-the-connectors)
+  - [Add the AWS Authentication Connector](#add-the-aws-authentication-connector)
+  - [Add the AWS Lambda Connector](#add-the-aws-lambda-connector)
 
 # 1. Create the Amazon Lambda Functions
 
@@ -100,3 +103,34 @@ Before launching Mendix Studio Pro make sure you [set your default browser to Fi
 After a short moment, the blank app shows up in Studio Pro and the development can commence.
 
 ![The initialized blank Mendix app as starting point for the lab](/readme-img/SP_BlankAppStart.png)
+
+## 3. Import the Connectors
+
+In order to enable **Mendix Makers** to easily integrate **AWS services** into their Mendix apps, Mendix has built a suite of connectors that are generally available in the [Mendix Marketplace](https://marketplace.mendix.com/).
+In this lab, you will make use of the two connectors
+* [AWS Authentication Connector](https://marketplace.mendix.com/link/component/120333). This one is a prerequisite for the use of all the other connectors.
+* [AWS Lambda Connector](https://marketplace.mendix.com/link/component/204511). This will enable you to actually invoke Amazon Lambda functions from inside the Mendix app.
+
+### Add the AWS Authentication Connector
+
+1. Click the shopping cart icon next to your Mendix profile picture in the right top corner of the Studio Pro window.
+   ![Marketplace button](/readme-img/SP_ShoppingCart.png)
+   This will open the Mendix Marketplace in a new popup window.
+2. Enter *AWS Authentication Connector* in the search field and press enter.
+3. Now all relevant results are shown to you. Click on the AWS Authentication Connector as shown in the image below.
+   ![Search results for AWS Authentication Connector in the Mendix marketplace](/readme-img/SP_SearchResultsAuthentication.png)
+4. Now the marketplace listing for the Authentication connector opens in the main Studio Pro window. Click on the **Download** button to download the connector into your app. In the following popup dialogue keep the default values and click **Import**. Click **OK** to dismiss the information popup.
+
+### Add the AWS Lambda Connector
+
+To download Mendix' *AWS Lambda Connector* follow the same steps as for the Authentication connector. As a search term use *AWS Lambda Connector* and use the result as shown in the image below.
+
+![Search results for AWS Lambda Connector in the Mendix marketplace](/readme-img/SP_SearchResultsLambda.png).
+
+You can click **Continue** in case of a warning popup about overwriting files.
+
+### Check the Downloads
+
+As a quick check before the next section, verify whether the downloads have been successful. You can do this by expanding the module **App AWSLabs_LaMbda** and then the folder **Marketplace modules** in the **App Explorer** on the left side. You should be able to find both new modules similar to the image below.
+
+![App Explorer with downloaded connectors](/readme-img/SP_AppExplorerAfterDownloads.png)
