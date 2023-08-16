@@ -99,4 +99,4 @@ Before launching Mendix Studio Pro make sure you [set your default browser to Fi
 
 After a short moment, the blank app shows up in Studio Pro and the development can commence.
 
-
+![The initialized blank Mendix app as starting point for the lab](/readme-img/SP_BlankAppStart.png)
