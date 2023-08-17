@@ -69,19 +69,19 @@ export const handler = async(event) => {
     if (lastCharacter == '1'){
         return {
             statusCode: 200,
-            body: JSON.stringify({Stad: 'Den Haag'}),
+            body: JSON.stringify({Location: 'Den Haag'}),
         };
     }
     else if(lastCharacter == '2'){
         return {
             statusCode: 200,
-            body: JSON.stringify({Stad: 'Amsterdam'}),
+            body: JSON.stringify({Location: 'Amsterdam'}),
         };
     }
     else {
         return {
             statusCode: 200,
-            body: JSON.stringify({Stad: 'Rotterdam'}),
+            body: JSON.stringify({Location: 'Rotterdam'}),
         };
     }
 };
