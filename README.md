@@ -161,7 +161,7 @@ This can be done by adding a new policy to the user **mendix-workshop-user**:
 1. Open [AWS CloudShell](https://console.aws.amazon.com/cloudshell/) or switch to an already open CloudShell tab or window.
 2. Use the [put-user-policy](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/put-user-policy.html) and the command below to add an inline policy document that is embedded in the **mendix-workshop-user**.
    ```
-   aws iam put-user-policy --user-name mendix-workshop-user --policy-name LambdaInlinePolicy --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["lambda*"],"Resource":"*"}]}'
+   aws iam put-user-policy --user-name mendix-workshop-user --policy-name LambdaInlinePolicy --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["lambda:*"],"Resource":"*"}]}'
    ```
 3. This command does not return an output.
 
