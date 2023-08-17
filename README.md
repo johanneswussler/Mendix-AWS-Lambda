@@ -29,9 +29,10 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
   - [Add the AWS Lambda Connector](#add-the-aws-lambda-connector)
 - [2. Configure the Credentials](#configure-the-credentials)
   - [Static Credentials](#static-credentials)
-    - [Provide Permissions to IAM User](#provide-permissions-to-iam-user)
-    - [Configure Static Credentials in Mendix App](#configure-static-credentials-in-mendix-app)
+    - [Provide Permissions to the IAM User](#provide-permissions-to-the-iam-user)
+    - [Configure Static Credentials in the Mendix App](#configure-static-credentials-in-the-mendix-app)
   - [Session Credentials](#session-credentials)
+    - [Configure Session Credentials in the Mendix App](#configure-session-credentials-in-the-mendix-app)
 
 # 1. Create the Amazon Lambda Functions
 
@@ -153,7 +154,7 @@ You can use [session credentials](https://aws.amazon.com/blogs/security/extend-a
 
 ### Static Credentials
 
-#### Provide Permissions to IAM User
+#### Provide Permissions to the IAM User
 
 First of all, the IAM user which was created during the steps in the prerequisites needs to be provided with the permissions to access the Amazon Lambda API.
 This can be done by adding a new policy to the user **mendix-workshop-user**:
@@ -170,9 +171,10 @@ To retrieve the specified inline policy document that is embedded in the **mendi
 aws iam get-user-policy --user-name mendix-workshop-user --policy-name LambdaInlinePolicy
 ```
 
-#### Configure Static Credentials in Mendix App
+#### Configure Static Credentials in the Mendix App
 
-Now that the user **mendix-workshop-user** has been provided with the necessary permissions, the static credentials can be set inside the Mendix app.
+Now that the user **mendix-workshop-user** has been provided with the necessary permissions, the static credentials can be set inside the Mendix app:
+
 1. In the **App Explorer** on the left side, expand **App AWSLabs_Lambda** and then double-click **Settings**.
 2. In the **App settings** window under Configuration, choose **New**.
 3. Under **Name**, enter *AWSStaticCredentialsConfiguration*.
@@ -196,9 +198,49 @@ Now that the user **mendix-workshop-user** has been provided with the necessary 
 
 ### Session Credentials
 
+To configure session credentials you provide the **ClientCertificateID**, **ProfileARN**, **RoleARN**, **SessionName**, **TrustAnchorARN**, **ClientCertificates** and **ClientCertificatePasswords**.
 
+Upload the **pfx** file with your certificate that you created earlier to your machine where you use **Mendix Studio Pro**. You can use one of the following methods to upload the certificate.
 
+* When you use Mendix Studio Pro on Amazon EC2 you can redirect a local folder in the remote desktop client to your EC2 instance. You find the folder redirection configuration in the remote desktop client when you edit your connection details under **folder**.
+* Use an Amazon S3 bucket. Upload your certificate to a bucket. On your EC2 instance, you can use the command prompt to copy the certificate from your S3 bucket. In the command prompt, you use a command similar to
 
+  ```
+  aws s3 cp s3://REPLACE_WITH_YOUR_S3_BUCKET/mx-aws-workshop.pfx
+  ```
+  
+* Use a webmail service. Send the certificate as a mail attachment and access your webmail application with the browser on the EC2 instance.
+
+#### Configure Session Credentials in the Mendix App
+
+For the session credentials configuration, you provide values from your **IAM Roles Anywhere** setup like the **ProfileARN**, **TrustAnchorARN**, and more.
+
+To configure session credentials:
+
+1. In the **App Explorer** on the left side, expand **App AWSLabs_Lambda** and then double-click **Settings**.
+2. In the **App settings** window under Configuration, choose **New**.
+3. Under **Name**, enter *AWSSessionCredentialsConfiguration*.
+4. On the **Constants** tab click **New**.
+5. Enter *SessionCredentials* into the search field.
+6. Under **Marketplace modules** -> **AmazonLambdaConnector** -> **ConnectionDetails** -> **SessionCredentials**, double-click **AccessKeyID** configure the following settings. You configure each setting by double-clicking on it. This action opens a new popup window for you to enter the respective value. Repeat the steps for searching and selecting each constant:
+    1. For the **ClientCertificateID** constant, enter the value *1*.
+    2. For the **ProfileARN** constant, enter the value of your **PROFILE_ARN**.
+    3. For the **RoleARN** constant, enter the value of your **ROLE_ARN**.
+    4. For the **SessionName** constant, enter the value *AWS_MX*.
+    5. For the **TrustAnchorARN** constant, enter the value of your **TRUST_ANCHOR_ARN**.
+    6. For the **UseSessionBasedCredentials** constant, set the value to *True*. To find this setting search for *UseSessionBasedCredentials*.
+
+       ![New session credentials configuration](/readme-img/SP_NewConfigSession.png)
+
+7. Add two custom variables for the local path of the **pfx** file and the password for your certificate file.
+     1. On the **Custom** tab click **New** to create the variable
+     2. Add one with the **Name** **ClientCertificatePasswords** and the password for your certificate file as **Value**.
+     3. Add one with the **Name** **ClientCertificates** and the path to your certificate file as **Value**.
+
+        ![Custom variable in the session credentials config](/readme-img/SP_ConfigSessionCredentialsCustom.png)
+
+8. Close the **Edit Configuration** window by clicking **OK**.
+9. In the **App Settings** window, choose **AWSSessionCredentialsConfiguration**, then choose **Make active**, and then click **OK**.
 
 
 
