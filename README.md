@@ -1,4 +1,4 @@
-# Lab3. Integrating AWS Lambda Functions into a Mendix App
+# Lab 3. Integrating AWS Lambda Functions into a Mendix App
 
 # Overview
 
@@ -27,6 +27,11 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 - [3. Import the Connectors](#import-the-connectors)
   - [Add the AWS Authentication Connector](#add-the-aws-authentication-connector)
   - [Add the AWS Lambda Connector](#add-the-aws-lambda-connector)
+- [2. Configure the Credentials](#configure-the-credentials)
+  - [Static Credentials](#static-credentials)
+    - [Provide Permissions to IAM User](#provide-permissions-to-iam-user)
+    - [Configure Static Credentials in Mendix App](#configure-static-credentials-in-mendix-app)
+  - [Session Credentials](#session-credentials)
 
 # 1. Create the Amazon Lambda Functions
 
@@ -134,3 +139,81 @@ You can click **Continue** in case of a warning popup about overwriting files.
 As a quick check before the next section, verify whether the downloads have been successful. You can do this by expanding the module **App AWSLabs_LaMbda** and then the folder **Marketplace modules** in the **App Explorer** on the left side. You should be able to find both new modules similar to the image below.
 
 ![App Explorer with downloaded connectors](/readme-img/SP_AppExplorerAfterDownloads.png)
+
+## 2. Configure the Credentials
+
+For the AWS Lambda Connector to be able to access the Amazon Lambda API, AWS credentials need to be provided inside the Mendix app.
+
+In this lab, you configure credentials to run the AWS connector locally in Mendix Studio Pro. To configure credentials you create a new app configuration with the credentials settings.
+
+You can use [session credentials](https://aws.amazon.com/blogs/security/extend-aws-iam-roles-to-workloads-outside-of-aws-with-iam-roles-anywhere/) or [static credentials](https://docs.aws.amazon.com/general/latest/gr/root-vs-iam.html). In general session credentials are preferred over static credentials because you don't have to embed long-term credentials in your application and you can provide access to AWS services without having to define an AWS identity.
+
+> [!IMPORTANT]
+> The Mendix [free environment](https://www.mendix.com/pricing/) supports **session credentials** only when you run your app **locally** in Mendix Studio Pro. When you publish your app use session credentials you must use a > licensed environment.
+
+### Static Credentials
+
+#### Provide Permissions to IAM User
+
+First of all, the IAM user which was created during the steps in the prerequisites needs to be provided with the permissions to access the Amazon Lambda API.
+This can be done by adding a new policy to the user **mendix-workshop-user**:
+1. Open [AWS CloudShell](https://console.aws.amazon.com/cloudshell/) or switch to an already open CloudShell tab or window.
+2. Use the [put-user-policy](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/put-user-policy.html) and the command below to add an inline policy document that is embedded in the **mendix-workshop-user**.
+   ```
+   aws iam put-user-policy --user-name mendix-workshop-user --policy-name LambdaInlinePolicy --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["lambda*"],"Resource":"*"}]}'
+   ```
+3. This command does not return an output.
+
+To retrieve the specified inline policy document that is embedded in the **mendix-workshop-user**, use the following command:
+
+```
+aws iam get-user-policy --user-name mendix-workshop-user --policy-name LambdaInlinePolicy
+```
+
+#### Configure Static Credentials in Mendix App
+
+Now that the user **mendix-workshop-user** has been provided with the necessary permissions, the static credentials can be set inside the Mendix app.
+1. In the **App Explorer** on the left side, expand **App AWSLabs_Lambda** and then double-click **Settings**.
+2. In the **App settings** window under Configuration, choose **New**.
+3. Under **Name**, enter *AWSStaticCredentialsConfiguration*.
+4. On the **Constants** tab click **New**.
+5. Enter *Key* into the search field.
+6. Under **Marketplace modules** -> **AmazonLambdaConnector** -> **ConnectionDetails** -> **StaticCredentials**, double-click **AccessKeyID**.
+   
+   ![Search results for keyword *key* in constant search](/readme-img/SP_ConstantSearchKey.png)
+   
+7. In the **New Constant Value** popup, under Value, enter (copy/paste) your AWS access key, and then choose **OK**.
+8. Add the secret access key in the same manner.
+9. To configure the use of static credentials add another constant. Choose **New** and search for *UseSessionBasedCredentials*, and then double-click **UseSessionBasedCredentials**.
+10. Under **New Constant Value** set the **Value** to **False**.
+11. Under Edit Configuration, choose OK.
+
+    ![New configuration](/readme-img/SP_NewConfig.png)
+    
+13. In the **App Settings** window, choose **AWSStaticCredentialsConfiguration**, then choose **Make active**, and then click **OK**.
+
+    ![Ready settings](/readme-img/SP_ReadySettings.png)
+
+### Session Credentials
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
