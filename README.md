@@ -36,11 +36,11 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 
 # 1. Create the Amazon Lambda Functions
 
-To start off the lab you need to create two Amazon Lambda functions (getPackageStatus and getPackageLocation) that will later be invoked in the Mendix app.
+To start off the lab you need to create two Amazon Lambda functions (getParcelStatus and getParcelLocation) that will later be invoked in the Mendix app.
 In both cases, use a Node.js 18.x runtime. Create the functions in a region of your choosing. 
 The code for both functions can be copied from below:
 
-Function *getPackageStatus*:
+Function *getParcelStatus*:
 ```node.js
 export const handler = async(event) => {
     const lastCharacter = event.id.slice(-1);
@@ -62,7 +62,7 @@ export const handler = async(event) => {
 };
 ```
 
-Function *getPackageLocation*:
+Function *getParcelLocation*:
 ```node.js
 export const handler = async(event) => {
     
