@@ -58,16 +58,12 @@ export const handler = async(event) => {
             body: JSON.stringify({Status: 'In Transit'}),
         };
     }
-    
 };
 ```
 
 Function *getParcelLocation*:
 ```node.js
 export const handler = async(event) => {
-    
-   
-    
     const lastCharacter = event.id.slice(-1);
     
     if (lastCharacter == '1'){
