@@ -1,6 +1,6 @@
 # Lab 3. Integrating AWS Lambda Functions into a Mendix App
 
-# Overview
+## Overview
 
 Welcome to the Mendix AWS Lambda lab! 
 
@@ -17,24 +17,29 @@ You can signup for a free Mendix account for free here: [Sign Up for Free](https
 
 You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Create a Free Account](https://aws.amazon.com/free/?all-free-tier&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all)
 
-# Workshop Outline:
+## Workshop Outline:
 
 - [Lab 3. Integrating AWS Lambda Functions in a Mendix App](#lab3.-integrating-aws-lambda-into-a-mendix-app)
 - [Workshop Outline:](#workshop-outline)
 - [1. Create the Amazon Lambda Functions](#1.-create-the-amazon-lambda-functions)   
 - [2. Create the Mendix Application](#2.-create-the-mendix-application)
   - [Start Mendix Studio Pro](#start-mendix-studio-pro)
-- [3. Import the Connectors](#import-the-connectors)
+- [3. Import the Connectors](#3.-import-the-connectors)
   - [Add the AWS Authentication Connector](#add-the-aws-authentication-connector)
   - [Add the AWS Lambda Connector](#add-the-aws-lambda-connector)
-- [2. Configure the Credentials](#configure-the-credentials)
+- [4. Configure the Credentials](#4.-configure-the-credentials)
   - [Static Credentials](#static-credentials)
     - [Provide Permissions to the IAM User](#provide-permissions-to-the-iam-user)
     - [Configure Static Credentials in the Mendix App](#configure-static-credentials-in-the-mendix-app)
   - [Session Credentials](#session-credentials)
     - [Configure Session Credentials in the Mendix App](#configure-session-credentials-in-the-mendix-app)
+- [5. Create the User Interface](#5.-create-the-user-interface)
+  - [Rename the Module](#rename-the-module)
+  - [Create the Domain Model](#create-the-domain-model)
+  - [Create the Home Page](#create-the-home-page)
+- [6. Create the Application Logic](#6.-create-the-application-logic)
 
-# 1. Create the Amazon Lambda Functions
+## 1. Create the Amazon Lambda Functions
 
 To start off the lab you need to create two Amazon Lambda functions (getParcelStatus and getParcelLocation) that will later be invoked in the Mendix app.
 In both cases, use a Node.js 18.x runtime. Create the functions in a region of your choosing. 
@@ -137,7 +142,7 @@ As a quick check before the next section, verify whether the downloads have been
 
 ![App Explorer with downloaded connectors](/readme-img/SP_AppExplorerAfterDownloads.png)
 
-## 2. Configure the Credentials
+## 4. Configure the Credentials
 
 For the AWS Lambda Connector to be able to access the Amazon Lambda API, AWS credentials need to be provided inside the Mendix app.
 
@@ -237,6 +242,49 @@ To configure session credentials:
 
 8. Close the **Edit Configuration** window by clicking **OK**.
 9. In the **App Settings** window, choose **AWSSessionCredentialsConfiguration**, then choose **Make active**, and then click **OK**.
+
+## 5. Create the User Interface
+
+The use case for the app in this lab will be an easy parcel-tracking system. The two lambda functions that allow that are already in place. So to start things off, you need to create a simple user interface via which the user can enter the tracking number of their parcel and receive the status and location of their parcel back.
+
+### Rename the Module
+
+When the app has been initiated there has already a first module been created. However, it is called **MyFirstModule**. In order to keep the app clear and intuitive, rename the module to *LambdaModule*.
+
+To do this execute the following steps:
+1. In the **App Explorer** right-click on the module **MyFirstModule** and then click **Rename...**.
+2. Enter the new name, in this case, *LambdaModule*, and click **OK**.
+
+### Create the Domain Model
+
+The [domain model](https://docs.mendix.com/refguide/domain-model/) is a model that describes the information (or data) used by your application in an abstract way.
+For this app, you will only need two entities. One that holds the parcel's information and one that temporarily stores the information that lambda returns to the Mendix app.
+
+Follow the steps below to create the domain model:
+1. In the **App Explorer** expand the **LambdaModule** and double-click on **Domain model**. This opens the module's domain model in a new tab in the **Studio Pro working area**.
+2. Right-click somewhere inside the domain model tab and click **Add entity**.
+3. Double-click the newly created entity **Entity** to open the **Properties of Entity LambdaModule.Entity** popup. There, change the entity's name to *Parcel*. For **Persistable** select **No** as for this app, it is not necessary to save the data to the database.
+4. In the **Attributes** tab click on **New** to create a new attribute. In the **Common** section of the **Add Attribute** popup, change the name to *TrackingNumber*. In the **Type** section, choose the type **String** from the **Type** dropdown menu. Then click **OK**.
+5. Create two more attributes with data type **String**. Name them *ParcelLocation* and *ParcelStatus*. Then close the popup with a click on **OK**.
+6. No create a second non-persistable entity named *LambdaResponse* with one attribute named *ResultString* of data type **String**.
+
+### Create the Home Page
+
+Now a home page is needed where a user can enter the tracking number of their parcel and receive a message back.
+
+1. Open the page editor for the home page by double-clicking on **Home_Web** in the **App Explorer**. You will see the default home page.
+2. There, first change the existing text. Double-click the first text field and the **Edit Text 'text1'** popup will open. There change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
+3. Change the caption of the second text field to *Here you can track your parcels*.
+4. Next, add a **Data view** to the second section of the home page by dragging it from the **Data containers** section in the **Toolbox** pane.
+5. Now double-click the new **Data view**. In the popup Select **Vertical** as **Form orientation** in the **General** section.
+6. In the **Data source** section select **Microflow** as **Type** and then click on **Select**.
+7. In the **Select Microflow** popup click on **New** and enter *DS_Parcel_New* as **Name**. Then click **OK**. Also, close the data view edit popup with another click on **OK**.
+8. 
+
+
+
+
+## 6. Create the Application Logic
 
 
 
