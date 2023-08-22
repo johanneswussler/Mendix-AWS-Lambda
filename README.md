@@ -272,17 +272,29 @@ Follow the steps below to create the domain model:
 
 Now a home page is needed where a user can enter the tracking number of their parcel and receive a message back.
 
-1. Open the page editor for the home page by double-clicking on **Home_Web** in the **App Explorer**. You will see the default home page.
-2. There, first change the existing text. Double-click the first text field and the **Edit Text 'text1'** popup will open. There change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
-3. Change the caption of the second text field to *Here you can track your parcels*.
-4. Next, add a **Data view** to the second section of the home page by dragging it from the **Data containers** section in the **Toolbox** pane.
-5. Now double-click the new **Data view**. In the popup Select **Vertical** as **Form orientation** in the **General** section.
-6. In the **Data source** section select **Microflow** as **Type** and then click on **Select**.
-7. In the **Select Microflow** popup click on **New** and enter *DS_Parcel_New* as **Name**. Then click **OK**. Also, close the data view edit popup with another click on **OK**.
-8. 
+1. By right-clicking on the module **LAmbdaModule** in the **App Explorer** and then clicking **Add folder...** create two new folders named *Pages* and *Objects*. These will help keep a better overview of the elements inside the module.
+2. Move the page element **Home_Web** into the **Pages** folder by dragging and dropping. Then open the page editor for the home page by double-clicking on **Home_Web** in the **App Explorer**. You will see the default home page.
+3. There, first change the existing text. Double-click the first text field and the **Edit Text 'text1'** popup will open. There change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
+4. Change the caption of the second text field to *Here you can track your parcels*.
+5. Next, add a **Data view** to the second section of the home page by dragging it from the **Data containers** section in the **Toolbox** pane.
 
+   ![Add a data view](/readme-img/SP_AddDataView.gif)
+   
+6. Now double-click the new **Data view**. In the popup Select **Vertical** as **Form orientation** in the **General** section.
+7. In the **Data source** section select **Microflow** as **Type** and then click on **Select**.
+8. In the **Select Microflow** popup click on **New** and enter *DS_Parcel_New* as **Name**. Then click **OK**. Also, close the data view edit popup with another click on **OK**.
+9. Now to solve the error that appeared, open the microflow editor by double-clicking on the newly created microflow **DS_Parcel_New**. There, drag a **Create object** activity from the **Toolbox** **Object activities** section and drop it onto the sequence flow arrow between the **Start event** and the **End event**.
 
+   ![Drag create object activity](/readme-img/SP_CreateObject.gif)
 
+10. Double-click the **Create object** activity and click **Select...** in the **Action** section for the **Entity** field. In the new **Select Entity** popup click on the **Parcel** entity and then click **Select** at the bottom of the popup to select and close. Then click **OK**
+11. Now right-click on the **Create object** activity and click **Set $NewParcel as return value**. Now all errors should be resolved. Close the microflow editor with a click on the cross on the respective tab and save the microflow when prompted.
+12. Return to the **Home_Web** page. There, insert a **Text box** widget from the **Input elements** section in the **Toolbox** into the upper part of the **Data view**.
+13. Double-click the **Text box** widget to open the **Edit Text Box** popup. There, in the **Data source** section. Click on **Select...** and then double-click the **TrackingNumber** attribute. Close the **Edit Text Box** popup with a click on **OK**.
+14. From the **Buttons** section in the **Toolbox** drag and drop a **Call microflow button** below the **Text box**. Click on **New** at the bottom of the **Select Microflow** popup and enter *ACT_Parcel_Track* as the name for the new microflow. Then click **OK**.
+15. Double-click the button and in the popup change the **Caption** in the **General** section to *Track*. Also, select **Primary** as **Button style** from the dropdown menu. Then click **OK**. 
+
+This concludes the creation of the user interface. In the next section you will create the application logic.
 
 ## 6. Create the Application Logic
 
