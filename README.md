@@ -266,52 +266,68 @@ Follow the steps below to create the domain model:
 3. Double-click the newly created entity **Entity** to open the **Properties of Entity LambdaModule.Entity** popup. There, change the entity's name to *Parcel*. For **Persistable** select **No** as for this app, it is not necessary to save the data to the database.
 4. In the **Attributes** tab click on **New** to create a new attribute. In the **Common** section of the **Add Attribute** popup, change the name to *TrackingNumber*. In the **Type** section, choose the type **String** from the **Type** dropdown menu. Then click **OK**.
 5. Create two more attributes with data type **String**. Name them *ParcelLocation* and *ParcelStatus*. Then close the popup with a click on **OK**.
-6. No create a second non-persistable entity named *LambdaResponse* with one attribute named *ResultString* of data type **String**.
+6. Create a second non-persistable entity named *LambdaResponse* with one attribute named *ResultString* of data type **String**.
 
 ### Create the Home Page
 
 Now a home page is needed where a user can enter the tracking number of their parcel and receive a message back.
 
-1. By right-clicking on the module **LAmbdaModule** in the **App Explorer** and then clicking **Add folder...** create two new folders named *Pages* and *Objects*. These will help keep a better overview of the elements inside the module.
-2. Move the page element **Home_Web** into the **Pages** folder by dragging and dropping. Then open the page editor for the home page by double-clicking on **Home_Web** in the **App Explorer**. You will see the default home page.
-3. There, first change the existing text. Double-click the first text field and the **Edit Text 'text1'** popup will open. There change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
-4. Change the caption of the second text field to *Here you can track your parcels*.
-5. Next, add a **Data view** to the second section of the home page by dragging it from the **Data containers** section in the **Toolbox** pane.
+1. By right-clicking on the module **LAmbdaModule** in the **App Explorer** and then clicking **Add folder...** a new folders named *Pages*.
+2. Move the page element **Home_Web** into the **Pages** folder by dragging and dropping. Then open the page editor for the home page by double-clicking on **Home_Web** in the **App Explorer**.
+3. There, first change the existing text. Double-click the first text element to open the dialog box. Change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
+4. Change the caption of the second text element to *Here you can track your parcels*.
+5. Add a **Data view** to the second section of the home page by dragging it from the **Data containers** section in the **Toolbox** pane.
 
    ![Add a data view](/readme-img/SP_AddDataView.gif)
    
-6. Now double-click the new **Data view**. In the popup Select **Vertical** as **Form orientation** in the **General** section.
-7. In the **Data source** section select **Microflow** as **Type** and then click on **Select**.
+6. Double-click the new **Data view**. In the dialog box select **Vertical** as **Form orientation** in the **General** section.
+7. In the **Data source** section, select **Microflow** as **Type** and then click on **Select**.
 8. In the **Select Microflow** popup click on **New** and enter *DS_Parcel_New* as **Name**. Then click **OK**. Also, close the data view edit popup with another click on **OK**.
 9. Now to solve the error that appeared, open the microflow editor by double-clicking on the newly created microflow **DS_Parcel_New**. There, drag a **Create object** activity from the **Toolbox** **Object activities** section and drop it onto the sequence flow arrow between the **Start event** and the **End event**.
 
    ![Drag create object activity](/readme-img/SP_CreateObject.gif)
 
 10. Double-click the **Create object** activity and click **Select...** in the **Action** section for the **Entity** field. In the new **Select Entity** popup click on the **Parcel** entity and then click **Select** at the bottom of the popup to select and close. Then click **OK**
-11. Now right-click on the **Create object** activity and click **Set $NewParcel as return value**. Now all errors should be resolved. Close the microflow editor with a click on the cross on the respective tab and save the microflow when prompted.
+11. Right-click on the **Create object** activity and click **Set $NewParcel as return value**. Now all errors should be resolved. Close the microflow editor with a click on the cross on the respective tab and save the microflow when prompted.
 12. Return to the **Home_Web** page. There, insert a **Text box** widget from the **Input elements** section in the **Toolbox** into the upper part of the **Data view**.
 13. Double-click the **Text box** widget to open the **Edit Text Box** popup. There, in the **Data source** section. Click on **Select...** and then double-click the **TrackingNumber** attribute. Close the **Edit Text Box** popup with a click on **OK**.
 14. From the **Buttons** section in the **Toolbox** drag and drop a **Call microflow button** below the **Text box**. Click on **New** at the bottom of the **Select Microflow** popup and enter *ACT_Parcel_Track* as the name for the new microflow. Then click **OK**.
 15. Double-click the button and in the popup change the **Caption** in the **General** section to *Track*. Also, select **Primary** as **Button style** from the dropdown menu. Then click **OK**. 
 
-This concludes the creation of the user interface. In the next section you will create the application logic.
+This concludes the creation of the user interface. In the next section, you will create the application logic.
 
 ## 6. Create the Application Logic
 
+In this section you will add the application's logic that will take a tracking number from the user and then calls **Amazon Lambda** functions and returns the results of those function calls to the user.
 
+1. Create a new folder in the module with the name *Objects*. This folder will contain the elements responsible for the logic.
+2. Open the microflow **ACT_Parcel_Track** in the microflow editor by double-clicking it in the **App Explorer**.
+3. Add a **Microflow call** activity from the **Toolbox** to the sequence flow.
+4. Double-click the new activity and in the dialog box click **Select...** next to **Microflow**.
+5. Select the new **Objects** folder and click **New** and name the new microflow *Parcel_GetStatus*. Then click **OK** and again **OK** on the **Call Microflow** popup.
+6. Add another **Microflow call** activity and create a new microflow in the **Objects** folder with name *Parcel_GetLocation* for it.
+7. Drop a **Change object** activity and a **Show message** activity on the sequence flow.
 
+   ![Parcel Track MF](/readme-img/SP_ParcelTrack.png)
 
+8. Open the microflow **Parcel_GetStatus** in the microflow editor.
+9. In the panel at the top of the tab click the **Parameter** icon and drop it in the microflow. In the dialog box click **Select...** and double-click the entity **Parcel**. Close the dialog with **OK**.
 
+   ![Add Parameter](/readme-img/SP_AddParameter.gif)
 
+10. Add a **Export with mapping** activity out of the **Integration activities** as the first activity to the sequence flow.
+11. Double-click the activity to open the dialog box.
+12. For **Store in** select **String Variable** and as **Variable name** enter *Payload*.
+13. Click **Select...** next to **Mapping**.
+14. Click the **Objects** folder and then Click **New**. Call the new *Export mapping** *EM_Parcel*.
 
+    ![New Export Mapping](readme-img/SP_NewExportMapping.png)
 
+15. Close both popups with clicks on **OK**.
+16. Now open the newly created **Export mapping** and in the top bar click on **Select elements...**.
+17. Select **JSON structure** as **Schema source** and then the **Select...** next to it.
+18. Click the folder **Objects** and then click **New**. Name the new **JSON structure** *JSON_Parcel* and click **OK**.
 
+    ![New JSON Structure for the Parcel entity](/readme-img/SP_NewJSONStructure.gif)
 
-
-
-
-
-
-
-
-
+19. 
