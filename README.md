@@ -48,19 +48,25 @@ The code for both functions can be copied from below:
 Function *getParcelStatus*:
 ```node.js
 export const handler = async(event) => {
-    const lastCharacter = event.id.slice(-1);
+    const lastCharacter = event.TrackingNumber.slice(-1);
     var randomNumber = Math.floor(Math.random() * 100);
     
+    if (lastCharacter == '9'){
+        return {
+            statusCode: 200,
+            body: {ParcelStatus: 'shipped'},
+        }
+    };
     if (randomNumber > 50){
         return {
             statusCode: 200,
-            body: JSON.stringify({Status: 'Delivered'}),
+            body: {ParcelStatus: 'delivered'},
         };
     }
     else {
         return {
             statusCode: 200,
-            body: JSON.stringify({Status: 'In Transit'}),
+            body: {PracelStatus: 'in transit'},
         };
     }
 };
@@ -69,27 +75,28 @@ export const handler = async(event) => {
 Function *getParcelLocation*:
 ```node.js
 export const handler = async(event) => {
-    const lastCharacter = event.id.slice(-1);
+    const lastCharacter = event.TrackingNumber.slice(-1);
     
     if (lastCharacter == '1'){
         return {
             statusCode: 200,
-            body: JSON.stringify({Location: 'Den Haag'}),
+            body: {ParcelLocation: 'Den Haag'},
         };
     }
     else if(lastCharacter == '2'){
         return {
             statusCode: 200,
-            body: JSON.stringify({Location: 'Amsterdam'}),
+            body: {ParcelLocation: 'Amsterdam'},
         };
     }
     else {
         return {
             statusCode: 200,
-            body: JSON.stringify({Location: 'Rotterdam'}),
+            body: {ParcelLocation: 'Rotterdam'},
         };
     }
 };
+
 ```
 
 ## 2. Create the Mendix Application
@@ -315,7 +322,7 @@ In this section you will add the application's logic that will take a tracking n
 
    ![Add Parameter](/readme-img/SP_AddParameter.gif)
 
-10. Add a **Export with mapping** activity out of the **Integration activities** as the first activity to the sequence flow.
+10. Add an **Export with mapping** activity out of the **Integration activities** as the first activity to the sequence flow.
 11. Double-click the activity to open the dialog box.
 12. For **Store in** select **String Variable** and as **Variable name** enter *Payload*.
 13. Click **Select...** next to **Mapping**.
@@ -330,4 +337,144 @@ In this section you will add the application's logic that will take a tracking n
 
     ![New JSON Structure for the Parcel entity](/readme-img/SP_NewJSONStructure.gif)
 
-19. 
+19. In the dialog box of the new **JSON structure** enter the JSON snippet below in the **JSON snippet** text box and click the **Refresh** button in the **Structure** section.
+
+    ```json
+    {
+    "TrackingNumber": "123124234"
+    }
+    ```
+
+    ![JSON structure for the parcel entity](/readme-img/SP_JSONStructureParcel.png)
+
+21. Close the popup with **OK**.
+22. Tick the checkbox of **ParcelID** in the **Export mapping** dialog box and close with **OK**.
+
+    ![Schema elements for export mapping](/readme-img/SP_SchemaSelectionExport.png)
+
+23. In the **Export mapping** editor, drag and drop the **Parcel** entity from the **Connector** pane on the right hand side in the empty **Drag entity here** box.
+24. In the dialog box, select **TrackingNumber (String(200))** as **Entity attribute** for the **Schema value element** **TrackingNumber (String)** and close with **OK*
+
+    ![Finish export mapping](/readme-img/SP_ExportMapping.gif)
+
+25. Return to the microflow **Parcel_GetStatus** and double-click on the **Export to JSON** activity.
+26. Select **Parcel** as the **Parameter** in the **Export Mapping** section and click **OK**.
+27. Add a **Create object** activity to the microflow.
+28. As an entity select **InvokeFunctionRequest** from the **AWSLambdaConnector** inside the **Marketplace modules** folder by double-clicking it.
+29. Click **New** and select **Payload (String(unlimited))** as **Member**. As **Value** enter *$Payload* in the text field and click **OK**.
+30. Click **New** and select **FanctionName (String(unlimited))** as **Member**. As **Value** enter *'getParcelStatus'*.
+
+    ![Create the InvokeFunctionRequest object](/readme-img/SP_CreateInvokeFunctionRequest.gif)
+    
+31. From the **AWS Lambda Connector** section in the toolbox, drag and drop a **Invoke Function** activity in the sequence flow.
+32. Double-click the activity and then select the **InvokeFunctionRequest** parameter and click **Edit parameter value**. The correct value **NewInvokeFunctionRequest** variable will already be preset and you just need to confirm by clicking **OK**.
+33. Edit the **AWS_Region** parameter. Select **Expression** and then enter the enumeration value of **AWSLambdaConnector.AWS_Region** in which you have created the lambda functions. For example *AWSLambdaConnector.AWS_Region.eu_central_1*. Close with **OK**.
+34. Rename the **Object name** of the **Output** section to *InvokeFunctionResponse_getParcelStatus* and click **OK**.
+
+    ![Create the InvokeFunction activity](/readme-img/SP_InvokeFunction.gif)
+
+35. Add a **Create variable** activity and double-click it.
+36. Set the **Data type** to **String** and as **Value** enter *$InvokeFunctionResponse_getParcelStatus/Payload*. Change the **Variable name** to *ResponePayload* and click **OK**.
+
+    ![Create variable ResponsePayload](/readme-img/SP_ResponsePayload.png)
+    
+37. Add a **Import with mapping** activity and double-click it.
+38. Click **Select...** next to **Mapping**.
+39. Select the **objects** folder and click **New** at the bottom of the popup.
+40. Name the new **Import mapping** *IM_ResponsePayload_GetParcelStatus* and click **OK**. Click on **OK** to close the dialog.
+41. Open the new **Import mapping** via the **App Explorer**.
+42. Click **Select elements...** at the top bar.
+43. Select **JSON structure** and then click **Select...**.
+44. Select the **Objects** folder and click **New**.
+45. Name the new **JSON structure** *JSON_GetParcelStatus_Response* and click **OK**.
+46. As **JSON snippet** paste an example response from the **getParcelStatus** lambda function (or copy from below), click **Refresh** and then **OK**.
+
+    ```json
+    {
+      "statusCode": 200,
+      "body": {
+        "ParcelStatus": "Shipped"
+      }
+    }
+    ```
+
+    ![Create the Import mapping](/readme-img/SP_ImportMapping.gif)
+
+47. In the **Schema elements** section, deselect the **(Object)** element, select the **body** element, expand it and also select the **ParcelStatus** element. Then click **OK**.
+
+    ![Select schema](/readme-img/SP_SelectSchemaImportMapping.png)
+
+48. Drag the **LambdaResponse** entity from the **Connector** pane to the left of the **Body** element inside the **Drag entity here** box.
+49. In the dialog box select **ResultString (String (200))** as **Entity attribute** for the **ParcelStatus (String)** **Schema value element**. Close with **OK**.
+50. Click the box with the **Click or drag a parameter entity here (optional)** and select **String** as **Data type**. Click **OK**.
+
+    ![Finish the import mapping](/readme-img/SP_ImportMapping_mapping.gif)
+
+51. Close and save the **Import mapping**.
+52. Return to the microflow **Parcel_GetStatus** and double-click on the **Import from XML** activity.
+53. Confirm the information popup stating that the action now imports JSON with a click on **OK**.
+54. Select **ResponsePayload** both as **Variable** and as **Parameter**.
+55. Select **Yes** for the **Store in variable** option and change the **Variable name** to *LambdaResponse_GetParcelStatus*. Close with **OK**.
+
+    ![Settings of the import activity](SP_ImportMappingActivity.png)
+
+56. Right-click on the **Import from JSON** activity and click **Set $LambdaResponse_GetParcelStatus as return value**.
+57. Close and save the microflow.
+58. Open the microflow **ACT_Parcel_Track** and double-click the **Call microflow** activity that calls the newly created **Parcel_GetStatus** microflow.
+59. An information popup will appear to inform that the parameter mappings have been updated because the microflow was changed. Dismiss it with **OK**.
+60. Change the **Object name** of the **Output** to *LambdaResponse_GetStatus*.
+61. Close the dialog box with a click on **OK**
+62. Double-click the **Change variable** activity.
+63. AS **Object** select the **Parcel** object.
+64. Click **New** and select **ParcelStatus** as **Member**.
+65. Enter *$LambdaResponse_GetStatus/ResultString* and click **OK**.
+
+    ![Change the parcel object](readme-img/SP_ChangeParcel.png)
+    
+66. Close the dialog box with **OK**.
+67. Double-click the **Show message** activity.
+68. Enter the string below in the **Template** text field.
+
+    ```
+    The parcel with the tracking number {1} has the status '{2}'.
+    ```
+
+69. Click **New** in the **Parameters** section.
+70. Enter *$Parcel/TrackingNumber* and click **OK*.
+71. Add another parameter with *$Parcel/ParcelStatus*.
+
+    ![Show message activity](/readme-img/SP_ShowMessage.png)
+    
+72. Close the popup with **OK**.
+73. Close and save the microflow.
+
+You have now created a working app, that calls **Amazon Lambda** functions and uses the results of these function calls. In the next section, it will be explained how to run the application and test it.
+You can also improve the application by implementing the lambda function **getParcelLocation** in the same fashion (steps 8 to 73).
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
