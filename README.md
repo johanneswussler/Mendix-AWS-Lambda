@@ -39,7 +39,7 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
   - [Create the Home Page](#create-the-home-page)
 - [6. Create the Application Logic](#6.-create-the-application-logic)
 - [7. Run Your App](#7.-run-your-app)
-- [8. Test Your App](#8.-test-your-app)
+- [8. Test Your App](#test-your-app)
 
 ## 1. Create the Amazon Lambda Functions
 
