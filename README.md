@@ -38,6 +38,8 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
   - [Create the Domain Model](#create-the-domain-model)
   - [Create the Home Page](#create-the-home-page)
 - [6. Create the Application Logic](#6.-create-the-application-logic)
+- [7. Run Your App](#7.-run-your-app)
+- [8. Test Your App](#8.-test-your-app)
 
 ## 1. Create the Amazon Lambda Functions
 
@@ -451,11 +453,31 @@ In this section you will add the application's logic that will take a tracking n
 You have now created a working app, that calls **Amazon Lambda** functions and uses the results of these function calls. In the next section, it will be explained how to run the application and test it.
 You can also improve the application by implementing the lambda function **getParcelLocation** in the same fashion (steps 8 to 73).
 
-    
+## 7. Run Your App
 
+Now it is time to run and test your app. You will run the app locally by following the steps:
+1. Click the button with the play icon on the top right of Studio Pro's window to run the app locally.
 
+   ![Run the app locally](/readme-img/SP_RunLocally.png)
 
+2. If you are prompted to save all unsaved documents, do so and continue.
 
+   ![App is starting](/readme-img/SP_StartingApp.png)
+   
+3. Now wait until Studio Pro notifies you that **Your App is running**.
+4. Click the **View App** button next to the **Run locally** button. This will open a new browser tab showing the home page. By default, the app is running on [http://localhost:8080/](http://localhost:8080/).
+
+   ![Home page of the app](/readme-img/HomePage.png)
+
+## 8. Test Your App
+
+1. In the **Tracking number** text box, enter a tracking number like *123456789* and click the **Track** button.
+
+   ![Test thre tracking](/readme-img/TestTracking.png)
+
+2. If everything worked correctly, you should be presented with an information popup showing the following message: **The parcel with the tracking number 123456789 has the status 'shipped' and is located in Rotterdam.**
+
+   ![Test result](/readme-img/TestResult.png)
 
 
 
