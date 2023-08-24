@@ -36,13 +36,19 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
         return Promise.reject(new Error("Media devices are not supported."));
     }
     if (pictureQuality === "custom" && !maximumHeight && !maximumWidth) {
-        return Promise.reject(new Error("Picture quality is set to 'Custom', but no maximum width or height was provided"));
+        return Promise.reject(
+            new Error("Picture quality is set to 'Custom', but no maximum width or height was provided")
+        );
     }
     // TODO: WC-463 rollup has a bug where comments are removed from the top of files, disallowing imports between "extra code" comments. Until this is fixed, SVGs are manually encoded and added here.
-    const closeSVG = "PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOC4yMjIyIDE2LjAwMDNMMjYuNTM5NyA3LjY4MjhDMjcuMTU0MSA3LjA2ODM4IDI3LjE1NDEgNi4wNzUyNCAyNi41Mzk3IDUuNDYwODJDMjUuOTI1MyA0Ljg0NjM5IDI0LjkzMjEgNC44NDYzOSAyNC4zMTc3IDUuNDYwODJMMTYuMDAwMiAxMy43NzgzTDcuNjgyNzkgNS40NjA4MkM3LjA2ODM3IDQuODQ2MzkgNi4wNzUyNCA0Ljg0NjM5IDUuNDYwODIgNS40NjA4MkM0Ljg0NjM5IDYuMDc1MjQgNC44NDYzOSA3LjA2ODM4IDUuNDYwODIgNy42ODI4TDEzLjc3ODMgMTYuMDAwM0w1LjQ2MDgyIDI0LjMxNzhDNC44NDYzOSAyNC45MzIzIDQuODQ2MzkgMjUuOTI1NCA1LjQ2MDgyIDI2LjUzOThDNS43NjcyNCAyNi44NDYzIDYuMTY5NTIgMjcuMDAwMyA2LjU3MTggMjcuMDAwM0M2Ljk3NDA4IDI3LjAwMDMgNy4zNzYzNiAyNi44NDYzIDcuNjgyNzkgMjYuNTM5OEwxNi4wMDAyIDE4LjIyMjNMMjQuMzE3NyAyNi41Mzk4QzI0LjYyNDEgMjYuODQ2MyAyNS4wMjY0IDI3LjAwMDMgMjUuNDI4NyAyNy4wMDAzQzI1LjgzMSAyNy4wMDAzIDI2LjIzMzMgMjYuODQ2MyAyNi41Mzk3IDI2LjUzOThDMjcuMTU0MSAyNS45MjU0IDI3LjE1NDEgMjQuOTMyMyAyNi41Mzk3IDI0LjMxNzhMMTguMjIyMiAxNi4wMDAzWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==";
-    const syncSVG = "PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS45OTk5IDVDMTIuNzA5MyA1IDkuNzU0NzQgNi40NDQ1NCA3LjczNzY2IDguNzM3NjJMMTAuMTQ2NCAxMS4xNDY0QzEwLjQ2MTQgMTEuNDYxNCAxMC4yMzgzIDEyIDkuNzkyOSAxMkgyLjVDMi4yMjM4NiAxMiAyIDExLjc3NjEgMiAxMS41VjQuMjA3MDZDMiAzLjc2MTYgMi41Mzg1OCAzLjUzODUyIDIuODUzNTYgMy44NTM1TDUuNjEzMiA2LjYxMzE2QzguMTczOTIgMy43ODE1IDExLjg3ODIgMiAxNS45OTk5IDJDMjMuMTY0NCAyIDI5LjA3MDIgNy4zODA0MiAyOS45MDAyIDE0LjMyMTlDMjkuOTk4NiAxNS4xNDQ0IDI5LjQxMTYgMTUuODkxIDI4LjU4OSAxNS45ODk0QzI3Ljc2NjQgMTYuMDg3OCAyNy4wMTk4IDE1LjUwMDcgMjYuOTIxNCAxNC42NzgxQzI2LjI2OTYgOS4yMjY5IDIxLjYyNzIgNSAxNS45OTk5IDVaTTMuNDEwOSAxNi4wMTA2QzQuMjMzNDYgMTUuOTEyMiA0Ljk4MDAyIDE2LjQ5OTMgNS4wNzg0IDE3LjMyMTlDNS43MzAzMiAyMi43NzMgMTAuMzcyNiAyNyAxNS45OTk5IDI3QzE5LjI5MDYgMjcgMjIuMjQ1MiAyNS41NTU0IDI0LjI2MjIgMjMuMjYyNEwyMS44NTM2IDIwLjg1MzZDMjEuNTM4NiAyMC41Mzg2IDIxLjc2MTYgMjAgMjIuMjA3MiAyMEgyOS41QzI5Ljc3NjIgMjAgMzAgMjAuMjI0IDMwIDIwLjVWMjcuNzkzQzMwIDI4LjIzODQgMjkuNDYxNCAyOC40NjE0IDI5LjE0NjQgMjguMTQ2NEwyNi4zODY4IDI1LjM4NjhDMjMuODI2IDI4LjIxODQgMjAuMTIxNiAzMCAxNS45OTk5IDMwQzguODM1NDIgMzAgMi45Mjk3OCAyNC42MTk2IDIuMDk5NjIgMTcuNjc4MUMyLjAwMTI2IDE2Ljg1NTYgMi41ODgzNCAxNi4xMDkgMy40MTA5IDE2LjAxMDZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K";
-    const cameraButtonSVG = "PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzUiIGN5PSIzNSIgcj0iMzUiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjM1IiBjeT0iMzUiIHI9IjI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=";
-    const saveSVG = "PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTI5Ljc1ODMgNS4zOTY5NEMzMC40MDY5IDUuOTczNTMgMzAuNDY1NCA2Ljk2Njc5IDI5Ljg4ODggNy42MTU0NEwxMy4xMjY5IDI2LjQ3MjZDMTIuODI4NyAyNi44MDgxIDEyLjQwMTIgMjcgMTEuOTUyNCAyN0MxMS41MDM1IDI3IDExLjA3NjEgMjYuODA4MSAxMC43Nzc5IDI2LjQ3MjZMMi4zOTY5NCAxNy4wNDRDMS44MjAzNiAxNi4zOTUzIDEuODc4NzkgMTUuNDAyMSAyLjUyNzQ0IDE0LjgyNTVDMy4xNzYxIDE0LjI0ODkgNC4xNjkzNiAxNC4zMDc0IDQuNzQ1OTQgMTQuOTU2TDExLjk1MjQgMjMuMDYzM0wyNy41Mzk4IDUuNTI3NDRDMjguMTE2NCA0Ljg3ODc5IDI5LjEwOTYgNC44MjAzNiAyOS43NTgzIDUuMzk2OTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K";
+    const closeSVG =
+        "PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOC4yMjIyIDE2LjAwMDNMMjYuNTM5NyA3LjY4MjhDMjcuMTU0MSA3LjA2ODM4IDI3LjE1NDEgNi4wNzUyNCAyNi41Mzk3IDUuNDYwODJDMjUuOTI1MyA0Ljg0NjM5IDI0LjkzMjEgNC44NDYzOSAyNC4zMTc3IDUuNDYwODJMMTYuMDAwMiAxMy43NzgzTDcuNjgyNzkgNS40NjA4MkM3LjA2ODM3IDQuODQ2MzkgNi4wNzUyNCA0Ljg0NjM5IDUuNDYwODIgNS40NjA4MkM0Ljg0NjM5IDYuMDc1MjQgNC44NDYzOSA3LjA2ODM4IDUuNDYwODIgNy42ODI4TDEzLjc3ODMgMTYuMDAwM0w1LjQ2MDgyIDI0LjMxNzhDNC44NDYzOSAyNC45MzIzIDQuODQ2MzkgMjUuOTI1NCA1LjQ2MDgyIDI2LjUzOThDNS43NjcyNCAyNi44NDYzIDYuMTY5NTIgMjcuMDAwMyA2LjU3MTggMjcuMDAwM0M2Ljk3NDA4IDI3LjAwMDMgNy4zNzYzNiAyNi44NDYzIDcuNjgyNzkgMjYuNTM5OEwxNi4wMDAyIDE4LjIyMjNMMjQuMzE3NyAyNi41Mzk4QzI0LjYyNDEgMjYuODQ2MyAyNS4wMjY0IDI3LjAwMDMgMjUuNDI4NyAyNy4wMDAzQzI1LjgzMSAyNy4wMDAzIDI2LjIzMzMgMjYuODQ2MyAyNi41Mzk3IDI2LjUzOThDMjcuMTU0MSAyNS45MjU0IDI3LjE1NDEgMjQuOTMyMyAyNi41Mzk3IDI0LjMxNzhMMTguMjIyMiAxNi4wMDAzWiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==";
+    const syncSVG =
+        "PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS45OTk5IDVDMTIuNzA5MyA1IDkuNzU0NzQgNi40NDQ1NCA3LjczNzY2IDguNzM3NjJMMTAuMTQ2NCAxMS4xNDY0QzEwLjQ2MTQgMTEuNDYxNCAxMC4yMzgzIDEyIDkuNzkyOSAxMkgyLjVDMi4yMjM4NiAxMiAyIDExLjc3NjEgMiAxMS41VjQuMjA3MDZDMiAzLjc2MTYgMi41Mzg1OCAzLjUzODUyIDIuODUzNTYgMy44NTM1TDUuNjEzMiA2LjYxMzE2QzguMTczOTIgMy43ODE1IDExLjg3ODIgMiAxNS45OTk5IDJDMjMuMTY0NCAyIDI5LjA3MDIgNy4zODA0MiAyOS45MDAyIDE0LjMyMTlDMjkuOTk4NiAxNS4xNDQ0IDI5LjQxMTYgMTUuODkxIDI4LjU4OSAxNS45ODk0QzI3Ljc2NjQgMTYuMDg3OCAyNy4wMTk4IDE1LjUwMDcgMjYuOTIxNCAxNC42NzgxQzI2LjI2OTYgOS4yMjY5IDIxLjYyNzIgNSAxNS45OTk5IDVaTTMuNDEwOSAxNi4wMTA2QzQuMjMzNDYgMTUuOTEyMiA0Ljk4MDAyIDE2LjQ5OTMgNS4wNzg0IDE3LjMyMTlDNS43MzAzMiAyMi43NzMgMTAuMzcyNiAyNyAxNS45OTk5IDI3QzE5LjI5MDYgMjcgMjIuMjQ1MiAyNS41NTU0IDI0LjI2MjIgMjMuMjYyNEwyMS44NTM2IDIwLjg1MzZDMjEuNTM4NiAyMC41Mzg2IDIxLjc2MTYgMjAgMjIuMjA3MiAyMEgyOS41QzI5Ljc3NjIgMjAgMzAgMjAuMjI0IDMwIDIwLjVWMjcuNzkzQzMwIDI4LjIzODQgMjkuNDYxNCAyOC40NjE0IDI5LjE0NjQgMjguMTQ2NEwyNi4zODY4IDI1LjM4NjhDMjMuODI2IDI4LjIxODQgMjAuMTIxNiAzMCAxNS45OTk5IDMwQzguODM1NDIgMzAgMi45Mjk3OCAyNC42MTk2IDIuMDk5NjIgMTcuNjc4MUMyLjAwMTI2IDE2Ljg1NTYgMi41ODgzNCAxNi4xMDkgMy40MTA5IDE2LjAxMDZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K";
+    const cameraButtonSVG =
+        "PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzUiIGN5PSIzNSIgcj0iMzUiIGZpbGw9IndoaXRlIi8+CjxjaXJjbGUgY3g9IjM1IiBjeT0iMzUiIHI9IjI4IiBmaWxsPSJ3aGl0ZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPgo=";
+    const saveSVG =
+        "PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTI5Ljc1ODMgNS4zOTY5NEMzMC40MDY5IDUuOTczNTMgMzAuNDY1NCA2Ljk2Njc5IDI5Ljg4ODggNy42MTU0NEwxMy4xMjY5IDI2LjQ3MjZDMTIuODI4NyAyNi44MDgxIDEyLjQwMTIgMjcgMTEuOTUyNCAyN0MxMS41MDM1IDI3IDExLjA3NjEgMjYuODA4MSAxMC43Nzc5IDI2LjQ3MjZMMi4zOTY5NCAxNy4wNDRDMS44MjAzNiAxNi4zOTUzIDEuODc4NzkgMTUuNDAyMSAyLjUyNzQ0IDE0LjgyNTVDMy4xNzYxIDE0LjI0ODkgNC4xNjkzNiAxNC4zMDc0IDQuNzQ1OTQgMTQuOTU2TDExLjk1MjQgMjMuMDYzM0wyNy41Mzk4IDUuNTI3NDRDMjguMTE2NCA0Ljg3ODc5IDI5LjEwOTYgNC44MjAzNiAyOS43NTgzIDUuMzk2OTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K";
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
         let error;
@@ -54,15 +60,25 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
             styleElements.push(styleElement);
             document.head.appendChild(styleElement);
         }
-        const { video, wrapper, actionControl, switchControl, closeControl, createAction, controlsWrapper, createActionAndSwitch, addAllControlButtons, removeAllControlButtons } = createFirstScreenElements();
+        const {
+            video,
+            wrapper,
+            actionControl,
+            switchControl,
+            closeControl,
+            createAction,
+            controlsWrapper,
+            createActionAndSwitch,
+            addAllControlButtons,
+            removeAllControlButtons
+        } = createFirstScreenElements();
         document.body.appendChild(wrapper);
         await startCamera(CAMERA_POSITION.BACK_CAMERA);
         const { handler: takePictureHandler, cleanup: secondScreenCleanup } = prepareSecondScreen();
         if (await hasMultipleCameras()) {
             controlsWrapper.classList.add("take-picture-action-switch-control-wrapper");
             createActionAndSwitch();
-        }
-        else {
+        } else {
             controlsWrapper.classList.add("take-picture-action-control-wrapper");
             createAction();
         }
@@ -82,8 +98,7 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
                         video.play();
                     });
                 }, 0);
-            }
-            else {
+            } else {
                 video.pause();
                 const videoCanvas = getVideoCanvas();
                 savePicture(videoCanvas, () => {
@@ -420,8 +435,7 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
                 cleanup: () => {
                     try {
                         document.body.removeChild(confirmationWrapper);
-                    }
-                    catch (e) {
+                    } catch (e) {
                         // silently handle case where node already removed.
                     }
                 }
@@ -448,19 +462,17 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
             var _a;
             try {
                 stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode,
-                        ...getCameraQuality()
-                    }
+                    video: Object.assign({ facingMode }, getCameraQuality())
                 });
-                (_a = stream === null || stream === void 0 ? void 0 : stream.getTracks()) === null || _a === void 0 ? void 0 : _a.forEach(track => {
-                    track.addEventListener("ended", () => {
-                        closeControlHandler();
-                        reject(new Error("Video stream unexpectedly ended."));
-                    });
-                });
-            }
-            catch (e) {
+                (_a = stream === null || stream === void 0 ? void 0 : stream.getTracks()) === null || _a === void 0
+                    ? void 0
+                    : _a.forEach(track => {
+                          track.addEventListener("ended", () => {
+                              closeControlHandler();
+                              reject(new Error("Video stream unexpectedly ended."));
+                          });
+                      });
+            } catch (e) {
                 if (e instanceof Error) {
                     switch (e.name) {
                         case "NotAllowedError":
@@ -470,7 +482,10 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
                             error = getUserText("Media not available.", "Media niet beschikbaar.");
                             break;
                         case "NotReadableError":
-                            error = getUserText("Media not available, is it already in use elsewhere?", "Media niet beschikbaar, wordt deze al ergens anders gebruikt?");
+                            error = getUserText(
+                                "Media not available, is it already in use elsewhere?",
+                                "Media niet beschikbaar, wordt deze al ergens anders gebruikt?"
+                            );
                             break;
                         default:
                             error = e.message;
@@ -490,9 +505,11 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
         function stopCamera() {
             videoIsReady = false;
             const tracks = stream === null || stream === void 0 ? void 0 : stream.getTracks();
-            tracks === null || tracks === void 0 ? void 0 : tracks.forEach(track => {
-                track.stop();
-            });
+            tracks === null || tracks === void 0
+                ? void 0
+                : tracks.forEach(track => {
+                      track.stop();
+                  });
             stream = undefined;
         }
         function savePicture(videoCanvas, onSuccess) {
@@ -502,37 +519,55 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
                 videoCanvas.toBlob(blob => {
                     if (blob) {
                         resolve(blob);
-                    }
-                    else {
+                    } else {
                         mx.ui.hideProgress(progressId);
                         reject(new Error("Couldn't save picture, please try again."));
                     }
                 });
             })
-                .then((blob) => {
-                mx.data.saveDocument(picture.getGuid(), filename, {}, blob, () => {
-                    picture.set("Name", filename);
-                    mx.data.commit({
-                        mxobj: picture,
-                        callback: () => {
-                            mx.ui.hideProgress(progressId);
-                            onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
-                            resolve(true);
+                .then(blob => {
+                    mx.data.saveDocument(
+                        picture.getGuid(),
+                        filename,
+                        {},
+                        blob,
+                        () => {
+                            picture.set("Name", filename);
+                            mx.data.commit({
+                                mxobj: picture,
+                                callback: () => {
+                                    mx.ui.hideProgress(progressId);
+                                    onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
+                                    resolve(true);
+                                },
+                                error: error => {
+                                    mx.ui.hideProgress(progressId);
+                                    reject(
+                                        new Error(
+                                            `An error occurred while trying to save the file${
+                                                error.message ? `: ${error.message}` : ""
+                                            }. Please try again.`
+                                        )
+                                    );
+                                }
+                            });
                         },
-                        error: (error) => {
+                        error => {
                             mx.ui.hideProgress(progressId);
-                            reject(new Error(`An error occurred while trying to save the file${error.message ? `: ${error.message}` : ""}. Please try again.`));
+                            reject(
+                                new Error(
+                                    `An error occurred while trying to save the file${
+                                        error.message ? `: ${error.message}` : ""
+                                    }. Please try again.`
+                                )
+                            );
                         }
-                    });
-                }, (error) => {
+                    );
+                })
+                .catch(message => {
                     mx.ui.hideProgress(progressId);
-                    reject(new Error(`An error occurred while trying to save the file${error.message ? `: ${error.message}` : ""}. Please try again.`));
+                    reject(new Error(message));
                 });
-            })
-                .catch((message) => {
-                mx.ui.hideProgress(progressId);
-                reject(new Error(message));
-            });
         }
         function getCameraQuality() {
             switch (pictureQuality) {
@@ -561,18 +596,19 @@ export async function TakePicture(picture, showConfirmationScreen, pictureQualit
         }
     });
     function prepareLanguage() {
-        const englishFn = (english, _dutch) => english;
+        const englishFn = english => english;
         try {
             return mx.session.sessionData.locale.code.toLowerCase().includes("en")
                 ? englishFn
                 : (_english, dutch) => dutch;
-        }
-        catch (_) {
+        } catch (_) {
             return englishFn;
         }
     }
     async function hasMultipleCameras() {
-        const videoDevices = (await navigator.mediaDevices.enumerateDevices()).filter(deviceInfo => deviceInfo.kind === "videoinput");
+        const videoDevices = (await navigator.mediaDevices.enumerateDevices()).filter(
+            deviceInfo => deviceInfo.kind === "videoinput"
+        );
         if (!videoDevices.length) {
             return Promise.reject(new Error("Your device does not have a camera."));
         }
