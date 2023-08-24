@@ -19,27 +19,27 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 
 ## Workshop Outline:
 
-- [Lab 3. Integrating AWS Lambda Functions in a Mendix App](#lab3.-integrating-aws-lambda-into-a-mendix-app)
+- [Lab 3. Integrating AWS Lambda Functions in a Mendix App](#lab3-integrating-aws-lambda-into-a-mendix-app)
 - [Workshop Outline:](#workshop-outline)
 - [1. Create the Amazon Lambda Functions](#1.-create-the-amazon-lambda-functions)   
-- [2. Create the Mendix Application](#2.-create-the-mendix-application)
+- [2. Create the Mendix Application](#2-create-the-mendix-application)
   - [Start Mendix Studio Pro](#start-mendix-studio-pro)
-- [3. Import the Connectors](#3.-import-the-connectors)
+- [3. Import the Connectors](#3-import-the-connectors)
   - [Add the AWS Authentication Connector](#add-the-aws-authentication-connector)
   - [Add the AWS Lambda Connector](#add-the-aws-lambda-connector)
-- [4. Configure the Credentials](#4.-configure-the-credentials)
+- [4. Configure the Credentials](#4-configure-the-credentials)
   - [Static Credentials](#static-credentials)
     - [Provide Permissions to the IAM User](#provide-permissions-to-the-iam-user)
     - [Configure Static Credentials in the Mendix App](#configure-static-credentials-in-the-mendix-app)
   - [Session Credentials](#session-credentials)
     - [Configure Session Credentials in the Mendix App](#configure-session-credentials-in-the-mendix-app)
-- [5. Create the User Interface](#5.-create-the-user-interface)
+- [5. Create the User Interface](#5-create-the-user-interface)
   - [Rename the Module](#rename-the-module)
   - [Create the Domain Model](#create-the-domain-model)
   - [Create the Home Page](#create-the-home-page)
-- [6. Create the Application Logic](#6.-create-the-application-logic)
-- [7. Run Your App](#7.-run-your-app)
-- [8. Test Your App](#test-your-app)
+- [6. Create the Application Logic](#6-create-the-application-logic)
+- [7. Run Your App](#7-run-your-app)
+- [8. Test Your App](#8-test-your-app)
 
 ## 1. Create the Amazon Lambda Functions
 
