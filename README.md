@@ -4,11 +4,11 @@
 
 Welcome to the Mendix AWS Lambda lab! 
 
-This lab has been designed to help you get started with using Mendix with [Amazon Lambda](https://aws.amazon.com/lambda/). After completing this lab, you will have the knowledge of how to use the [Mendix AWS Lambda connector](https://marketplace.mendix.com/link/component/204511) in order to call AWS Lambda functions by first converting an input object to JSON format, and then converting the output JSON of the AWS Lambda function back into a Mendix object.
+This lab has been designed to help you get started with using Mendix with [AWSLambda](https://aws.amazon.com/lambda/). After completing this lab, you will have the knowledge of how to use the [Mendix AWS Lambda connector](https://marketplace.mendix.com/link/component/204511) in order to call AWS Lambda functions by first converting an input object to JSON format, and then converting the output JSON of the AWS Lambda function back into a Mendix object.
 
 You will be using the following key services:
 
-* [Amazon Lambda](https://aws.amazon.com/lambda/)
+* [AWS Lambda](https://aws.amazon.com/lambda/)
 
 
 <b>This workshop assumes that you already have some knowledge of AWS, an AWS account, and a Mendix account</b>
@@ -21,7 +21,7 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 
 - [Lab 3. Integrating AWS Lambda Functions in a Mendix App](#lab3-integrating-aws-lambda-into-a-mendix-app)
 - [Workshop Outline:](#workshop-outline)
-- [1. Create the Amazon Lambda Functions](#1.-create-the-amazon-lambda-functions)   
+- [1. Create the AWS Lambda Functions](#1.-create-the-amazon-lambda-functions)   
 - [2. Create the Mendix Application](#2-create-the-mendix-application)
   - [Start Mendix Studio Pro](#start-mendix-studio-pro)
 - [3. Import the Connectors](#3-import-the-connectors)
@@ -41,9 +41,9 @@ You can open an AWS Account and access AWS Free Tier Offers: [Learn more and Cre
 - [7. Run Your App](#7-run-your-app)
 - [8. Test Your App](#8-test-your-app)
 
-## 1. Create the Amazon Lambda Functions
+## 1. Create the AWS Lambda Functions
 
-To start off the lab you need to create two Amazon Lambda functions (getParcelStatus and getParcelLocation) that will later be invoked in the Mendix app.
+To start off the lab you need to create two AWS Lambda functions (getParcelStatus and getParcelLocation) that will later be invoked in the Mendix app.
 In both cases, use a Node.js 18.x runtime. Create the functions in a region of your choosing. 
 The code for both functions can be copied from below:
 
@@ -153,7 +153,7 @@ As a quick check before the next section, verify whether the downloads have been
 
 ## 4. Configure the Credentials
 
-For the AWS Lambda Connector to be able to access the Amazon Lambda API, AWS credentials need to be provided inside the Mendix app.
+For the AWS Lambda Connector to be able to access the AWS Lambda API, AWS credentials need to be provided inside the Mendix app.
 
 In this lab, you configure credentials to run the AWS connector locally in Mendix Studio Pro. To configure credentials you create a new app configuration with the credentials settings.
 
@@ -166,7 +166,7 @@ You can use [session credentials](https://aws.amazon.com/blogs/security/extend-a
 
 #### Provide Permissions to the IAM User
 
-First of all, the IAM user which was created during the steps in the prerequisites needs to be provided with the permissions to access the Amazon Lambda API.
+First of all, the IAM user which was created during the steps in the prerequisites needs to be provided with the permissions to access the AWS Lambda API.
 This can be done by adding a new policy to the user **mendix-workshop-user**:
 1. Open [AWS CloudShell](https://console.aws.amazon.com/cloudshell/) or switch to an already open CloudShell tab or window.
 2. Use the [put-user-policy](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/put-user-policy.html) and the command below to add an inline policy document that is embedded in the **mendix-workshop-user**.
@@ -258,7 +258,7 @@ The use case for the app in this lab will be an easy parcel-tracking system. The
 
 ### Rename the Module
 
-When the app has been initiated there has already a first module been created. However, it is called **MyFirstModule**. In order to keep the app clear and intuitive, rename the module to *LambdaModule*.
+When the app has been initiated, there has already a first module been created. However, it is called **MyFirstModule**. In order to keep the app clear and intuitive, rename the module to *LambdaModule*.
 
 To do this execute the following steps:
 1. In the **App Explorer** right-click on the module **MyFirstModule** and then click **Rename...**.
@@ -283,7 +283,7 @@ Now a home page is needed where a user can enter the tracking number of their pa
 
 1. By right-clicking on the module **LAmbdaModule** in the **App Explorer** and then clicking **Add folder...** a new folders named *Pages*.
 2. Move the page element **Home_Web** into the **Pages** folder by dragging and dropping. Then open the page editor for the home page by double-clicking on **Home_Web** in the **App Explorer**.
-3. There, first change the existing text. Double-click the first text element to open the dialog box. Change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
+3. Change the existing text. Double-click the first text element to open the dialog box. Change the **Caption** in the **General** section from *Home* to *Parcel Tracking* and click **OK**.
 4. Change the caption of the second text element to *Here you can track your parcels*.
 5. Add a **Data view** to the second section of the home page by dragging it from the **Data containers** section in the **Toolbox** pane.
 
@@ -307,7 +307,7 @@ This concludes the creation of the user interface. In the next section, you will
 
 ## 6. Create the Application Logic
 
-In this section you will add the application's logic that will take a tracking number from the user and then calls **Amazon Lambda** functions and returns the results of those function calls to the user.
+In this section you will add the application's logic that will take a tracking number from the user and then calls **AWS Lambda** functions and returns the results of those function calls to the user.
 
 1. Create a new folder in the module with the name *Objects*. This folder will contain the elements responsible for the logic.
 2. Open the microflow **ACT_Parcel_Track** in the microflow editor by double-clicking it in the **App Explorer**.
@@ -450,7 +450,7 @@ In this section you will add the application's logic that will take a tracking n
 72. Close the popup with **OK**.
 73. Close and save the microflow.
 
-You have now created a working app, that calls **Amazon Lambda** functions and uses the results of these function calls. In the next section, it will be explained how to run the application and test it.
+You have now created a working app, that calls **AWS Lambda** functions and uses the results of these function calls. In the next section, it will be explained how to run the application and test it.
 You can also improve the application by implementing the lambda function **getParcelLocation** in the same fashion (steps 8 to 73).
 
 ## 7. Run Your App
@@ -478,25 +478,4 @@ Now it is time to run and test your app. You will run the app locally by followi
 2. If everything worked correctly, you should be presented with an information popup showing the following message: **The parcel with the tracking number 123456789 has the status 'shipped' and is located in Rotterdam.**
 
    ![Test result](/readme-img/TestResult.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   
